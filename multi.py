@@ -71,10 +71,10 @@ async def connect_to_wss(socks5_proxy, user_id):
             logger.error(socks5_proxy)
 
 async def main():
-    with open('user_id.txt', 'r') as file:
+    with open('/data/user_id.txt', 'r') as file:  # Adjusted path
         user_ids = file.read().splitlines()
 
-    with open('proxy_list.txt', 'r') as file:
+    with open('/data/proxy_list.txt', 'r') as file:  # Adjusted path
         proxies = file.read().splitlines()
 
     tasks = [asyncio.ensure_future(connect_to_wss(proxy, user_id)) for proxy, user_id in zip(proxies, user_ids)]
