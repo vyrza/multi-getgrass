@@ -1,14 +1,19 @@
-#script for 1 user_id and a whole bunch of proxies
-
 import asyncio
 import random
 import ssl
 import json
 import time
 import uuid
+import sys  # Import sys to read command line arguments
 from loguru import logger
 from websockets_proxy import Proxy, proxy_connect
 from fake_useragent import UserAgent
+
+if len(sys.argv) < 2:
+    print("Usage: python single.py <user_id>")
+    sys.exit(1)
+
+_user_id = sys.argv[1]  # Read user_id from command line argument
 
 user_agent = UserAgent()
 random_user_agent = user_agent.random
@@ -39,7 +44,6 @@ async def connect_to_wss(socks5_proxy, user_id):
                         await websocket.send(send_message)
                         await asyncio.sleep(20)
 
-                # asyncio.create_task(send_http_request_every_10_seconds(socks5_proxy, device_id))
                 await asyncio.sleep(1)
                 asyncio.create_task(send_ping())
 
@@ -73,7 +77,6 @@ async def connect_to_wss(socks5_proxy, user_id):
 
 
 async def main():
-    _user_id = input('Please Enter your user ID: ')
     with open('proxy_list.txt', 'r') as file:
         socks5_proxy_list = file.read().splitlines()
     tasks = [asyncio.ensure_future(connect_to_wss(i, _user_id)) for i in socks5_proxy_list]
@@ -81,5 +84,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    #letsgo
     asyncio.run(main())
